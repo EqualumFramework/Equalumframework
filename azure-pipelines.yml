@@ -6,7 +6,7 @@ trigger:
 - dev
 
 pool:
-    name: SDT-Org-Agent_Linux
+    name: RD-Equalum-Pool
 
 parameters: 
 - name: Sourcecreation
