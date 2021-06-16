@@ -1,0 +1,28 @@
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- dev
+
+pool:
+  name: RD-Equalum-Pool
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+    addToPath: true
+    architecture: 'x64'
+- task: CmdLine@2
+  inputs:
+    script: |
+      pip install --upgrade pip
+      pip install pandas
+       pip install -U virtualenv
+       virtualenv -p python3 src
+       source src/bin/activate
+       pip install python-dev-tools
+       cd object
+       pip install -r requirments.txt
+       #python -m pip list
+       python Equalum_Object.py --operation Flow --file Flows.csv

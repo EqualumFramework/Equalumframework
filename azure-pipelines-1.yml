@@ -1,0 +1,155 @@
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- dev
+
+pool:
+    name: SDT-Org-Agent_Linux
+
+parameters: 
+- name: Sourcecreation
+  type: boolean
+  default: true
+- name: Target_creation
+  type: boolean
+  default: true
+- name: Stream_creation
+  type: boolean
+  default: true
+- name: Flow_creation
+  type: boolean
+  default: true
+- name: flow_id
+  type: string
+  default: 1028
+  displayName: Flow Id
+- name: flow_name
+  type: string
+  default: samplegsk
+  displayName: Flow name
+- name: tenant_id
+  type: string
+  default: 0
+  displayName: Tenant Id
+- name: tenant_name
+  type: string
+  default: equalum
+  displayName: Tenant Name
+- name: targettenant_name
+  type: string
+  default: equalum
+  displayName:  Target Tenant Name
+- name: user_name
+  type: string
+  default: equalum
+  displayName: user name
+- name: user_password
+  type: string
+  default: equalum
+  displayName: password
+  
+
+
+
+stages:
+- stage: Sourcecreation  
+  condition: eq('${{ parameters.Sourcecreation }}', True)
+  jobs:
+  - job: source_Creation
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.x'
+        addToPath: true
+        architecture: 'x64'
+    - task: CmdLine@2
+      inputs:
+        script: |
+          pip install --upgrade pip
+          pip install pandas
+          pip install -U virtualenv
+          virtualenv -p python3 src
+          source src/bin/activate
+          pip install python-dev-tools
+          cd object
+          pip install -r requirments.txt
+          #python -m pip list
+          python Equalum_Object.py --operation Source --file Sources.csv
+- stage: Targetcreation  
+  condition: eq('${{ parameters.Target_creation }}', True)
+  jobs:
+  - job: target_Creation
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.x'
+        addToPath: true
+        architecture: 'x64'
+    - task: CmdLine@2
+      inputs:
+        script: |
+          pip install --upgrade pip
+          pip install pandas
+          pip install -U virtualenv
+          virtualenv -p python3 src
+          source src/bin/activate
+          pip install python-dev-tools
+          cd object
+          pip install -r requirments.txt
+          #python -m pip list
+          python Equalum_Object.py --operation Target --file Targets.csv
+- stage: Streamcreation  
+  condition: eq('${{ parameters.Stream_creation }}', True)  
+  jobs:
+  - job: stream_Creation
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.x'
+        addToPath: true
+        architecture: 'x64'
+    - task: CmdLine@2
+      inputs:
+        script: |
+          pip install --upgrade pip
+          pip install pandas
+          pip install -U virtualenv
+          virtualenv -p python3 src
+          source src/bin/activate
+          pip install python-dev-tools
+          cd object
+          pip install -r requirments.txt
+          #python -m pip list
+          python Equalum_Object.py --operation Stream --file Streams.csv 
+- stage: Flowcreation  
+  condition: eq('${{ parameters.Flow_creation }}',true)
+  jobs:
+  - job: flow_Creation
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.x'
+        addToPath: true
+        architecture: 'x64'
+    - task: CmdLine@2
+      inputs:
+        script: |
+          pip install --upgrade pip
+          pip install -U virtualenv
+          virtualenv -p python3 src
+          source src/bin/activate
+          pip install python-dev-tools
+          cd object
+          pip install pandas
+          pip install -r requirments.txt
+          export flowid=${{ parameters.flow_id }} >> file.txt
+          export flowname=${{ parameters.flow_name }} >> file.txt
+          export tenantid=${{ parameters.tenant_id }} >> file.txt
+          export tenantname=${{ parameters.tenant_name }} >> file.txt
+          export targettenantname=${{ parameters.targettenant_name }} >> file.txt
+          export username=${{ parameters.user_name }} >> file.txt
+          export password=${{ parameters.user_password }} >> file.txt
+          cat file.txt
+          python flow.py "$flowid" "$flowname" "$tenantid" "$tenantname" "$targettenantname" "$username" "$password"
