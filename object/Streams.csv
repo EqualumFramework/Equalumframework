@@ -1,0 +1,2 @@
+stream_type,stream_name,schema,table,topic,sourceId
+oracle,eqstream,EQUALUM_AGENT,EMPLOYEE,eventStream,1447

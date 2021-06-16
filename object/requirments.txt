@@ -1,0 +1,5 @@
+pandas
+requests
+argparse
+pymongo
+csvfile

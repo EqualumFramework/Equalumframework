@@ -1,0 +1,2 @@
+source_type,source_name,user,password,host_servers
+kafka,test123,,,"10.139.11.215:9999"

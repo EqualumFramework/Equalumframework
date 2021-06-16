@@ -1,0 +1,2 @@
+target_type,target_name,user,password,host_servers,database_name,schema_name
+kafkaTarget,test2,,,"10.139.11.215:9999",,
